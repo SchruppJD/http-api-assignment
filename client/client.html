@@ -7,6 +7,105 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
 
+    //Response Handling (Response and (parse or not))
+    const handleResponse = (xhr) => {
+        
+    //Json or XML
+    const type = xhr.getResponseHeader('content-type');
+    
+    //Grab content section
+    const content = document.querySelector('#content');        
+    content.innerHTML = '';
+        
+        
+    //Status
+    switch(xhr.status) {
+        case 200: //if success
+          content.innerHTML = `<b>Success</b><br>`;
+          break;
+        case 201: //if created
+          content.innerHTML = '<b>Create</b><br>';
+          break;
+        case 400: //if bad request
+          content.innerHTML = `<b>Bad Request</b><br>`;
+          break;
+        case 401: //if Unauthorized
+          content.innerHTML = `<b>Unauthorized</b><br>`;
+          break;
+        case 403: //if Forbidden
+          content.innerHTML = `<b>Forbidden</b><br>`;
+          break;
+        case 500: //if InternalError
+          content.innerHTML = `<b>Internal Server Error</b><br>`;
+          break;
+        case 501: //if Not Implemented
+          content.innerHTML = `<b>Not Implemented</b><br>`;
+          break;
+        case 404: //if not found
+          content.innerHTML = `<b>Resource Not Found</b><br>`;
+          break;
+        default: //any other status
+          content.innerHTML = `Error code not implemented by client.<br>`;
+          break;
+      }
+        
+        
+        
+    //Parse result
+    if(type === 'application/json') {
+        //parse the object and print it to the console
+            const obj = JSON.parse(xhr.response);
+            console.dir(obj);
+        
+        //Set HTML with data
+        content.innerHTML += `Message: ${obj.message}`;
+        //if (obj.id)
+        //content.innerHTML += `Error: ${obj.id}`;
+        }
+        else if (type === 'text/xml'){
+            console.log(xhr);
+            //Grab information from response tag
+            const message = xhr.responseXML.querySelector('message').textContent;
+            //const statusCode = xhr.responseXML.querySelector('id').textContent;
+            //Set HTML with data
+            content.innerHTML += `Message: ${message}`;
+            //content.innerHTML += `Error: ${statusCode}`;
+            
+        }
+    }; //End Response Handle
+
+
+    //function to send an xhr request
+    const sendAjax = (url, acceptedType) => {
+      //create a new xhr (ajax) request. 
+      const xhr = new XMLHttpRequest();
+      //set the xhr to a GET request to a certain URL
+      xhr.open('GET', url);
+      //Set the accept headers to the desired response mime type
+      //Server does NOT have to support this. It is a gentle request.
+      xhr.setRequestHeader ("Accept", acceptedType);
+      //When the xhr loads, call handleResponse and pass the xhr object
+      xhr.onload = () => handleResponse(xhr);
+      
+      //send our ajax request to the server
+      xhr.send();
+        console.log(url,acceptedType);
+    };
+
+    const init = () => {
+      const sendButton = document.querySelector("#send");
+      
+      const sendRequest = () => {
+          let page = document.querySelector("#page").value;
+          let type = document.querySelector("#type").value;
+          sendAjax(page, type);
+      }
+      
+      sendButton.addEventListener('click', sendRequest);
+    };
+    window.onload = init;
+        
+        
   </script>
 </head>
 <body>
