@@ -1,8 +1,8 @@
 const fs = require('fs'); // File System
 
 // Load Pages
-const index = fs.readFileSync('$(__dirname)/../client/client.html');
-const styleCSS = fs.readFileSync('$(__dirname)/../client/style.css');
+const index = fs.readFileSync(`${__dirname}/../client/client.html`);
+const styleCSS = fs.readFileSync(`${__dirname}/../client/style.css`);
 
 // function to send response
 // const respond = (request, response, content, type, status) => {
